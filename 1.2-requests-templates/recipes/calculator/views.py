@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, reverse
+from django.core.paginator import Paginator
+from django.http import HttpResponse
 
 DATA = {
     'omlet': {
@@ -18,6 +20,24 @@ DATA = {
     },
     # можете добавить свои рецепты ;)
 }
+
+
+
+def recipe(request, dish):
+    serving = request.GET.get('serving')
+    if serving and int(serving) != 0:
+        count_ingred = {}
+        for ingred, count in DATA[dish].items():
+            count_ingred[ingred] = count * int(serving)
+        context = {
+            'recipe': count_ingred
+        }
+    else:
+        context = {
+            'recipe': DATA[dish]
+        }
+    return render(request, 'calculator/index.html', context)
+
 
 # Напишите ваш обработчик. Используйте DATA как источник данных
 # Результат - render(request, 'calculator/index.html', context)
